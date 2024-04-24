@@ -1,4 +1,15 @@
-# Seguintes as seguintes atividades:
+# Desafio de código no diretório:
+
+code_challengs/Estrutura_Dados
+
+Arquivos:
+
+* 04_lista_encadeada.c
+
+* 05_lista_duplamente_encadeada.c
+
+
+# Seguintes atividades:
 
 1. Ao iniciar o programa o arquivo database_alunos.txt deverá ser aberto e utilizado para preencher a Lista Encadeada que está implementada no código 04_lista_encadeada.c. 
 
