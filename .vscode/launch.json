@@ -6,8 +6,8 @@
       "type": "lldb",
       "request": "launch",
       "args": [],
-      "cwd": "/Users/natalia/Desktop/Code_challenges/Estrutura_Dados",
-      "program": "/Users/natalia/Desktop/Code_challenges/Estrutura_Dados/build/Debug/outDebug"
+      "cwd": "/Users/natalia/Desktop/Structure_C/Code_challenges/Estrutura_Dados",
+      "program": "/Users/natalia/Desktop/Structure_C/Code_challenges/Estrutura_Dados/build/Debug/outDebug"
     }
   ]
 }
