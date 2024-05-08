@@ -6,273 +6,71 @@ typedef struct tipo_aluno {
     int matricula;
     char nome[100];
     char curso[100];
-    struct tipo_aluno *prox;
 } Aluno;
 
-void iniciar(Aluno **cabeca) {
-    *cabeca = NULL;
-}
-
-void insere(char nome[100], char curso[100], int matricula, Aluno **cabeca) {
-    Aluno *novo = (Aluno *)malloc(sizeof(Aluno));
-    strcpy(novo->nome, nome);
-    strcpy(novo->curso, curso);
-    novo->matricula = matricula;
-    novo->prox = *cabeca;
-    *cabeca = novo;
-    printf("%d - Aluno teve sua insercao concluida!\n", matricula);
-}
-
-void imprime(Aluno **cabeca) {
-    printf("\n\n========= RELATORIO DE ALUNOS =========\n");
-    Aluno *p = *cabeca;
-    while (p != NULL) {
-        printf("%d\n", p->matricula);
-        printf("%s\n", p->nome);
-        printf("%s\n", p->curso);
-        printf("====================\n");
-        p = p->prox;
-    }
-}
-
-Aluno* buscar(int matricula, Aluno **cabeca) {
-    Aluno *p = *cabeca;
-    while (p != NULL) {
-        if (p->matricula == matricula) {
-            printf("### Aluno encontrado ###\n");
-            printf("%d\n", p->matricula);
-            printf("%s\n", p->nome);
-            printf("%s\n", p->curso);
-            return p;
-        }
-        p = p->prox;
-    }
-    printf("Aluno nao encontrado na base!\n");
-    return NULL;
-}
-
-Aluno* buscar_anterior(int matricula, Aluno **cabeca) {
-    Aluno *p = *cabeca;
-    Aluno *anterior = NULL;
-
-    while (p != NULL && p->matricula != matricula) {
-        anterior = p;
-        p = p->prox;
-    }
-
-    if (p == NULL) {
-        printf("Aluno nao encontrado na base!\n");
-        return NULL;
-    }
-
-    return anterior;
-}
-
-int remover_elemento(int matricula, Aluno **cabeca) {
-    Aluno *anterior = buscar_anterior(matricula, cabeca);
-
-    if (anterior == NULL && (*cabeca)->matricula != matricula) {
-        printf("Aluno nao encontrado na base!\n");
-        return 0;
-    }
-
-    Aluno *delete;
-    if (anterior == NULL) {
-        delete = *cabeca;
-        *cabeca = (*cabeca)->prox;
-    } else {
-        delete = anterior->prox;
-        anterior->prox = delete->prox;
-    }
-
-    printf("Matricula %d removida com sucesso.\n", matricula);
-    free(delete);
-    return 1;
-}
-
-void ler_arquivo(Aluno **cabeca) {
+void ler_arquivo(Aluno alunos[], int *total_alunos) {/* A função ler_arquivo() foi modificada para ler os dados do arquivo e preencher um array de structs Aluno.*/
     FILE *arquivo = fopen("database_alunos.txt", "r");
     if (arquivo == NULL) {
         printf("Erro ao abrir o arquivo.\n");
         return;
     }
 
-    char linha[255];
-    while (fgets(linha, sizeof(linha), arquivo)) {
-        int matricula;
-        char nome[100];
-        char curso[100];
-
-        sscanf(linha, "%d %s %[^\n]", &matricula, nome, curso);
-        insere(nome, curso, matricula, cabeca);
+    while (fscanf(arquivo, "%d %[^\n] %[^\n]", &alunos[*total_alunos].matricula, alunos[*total_alunos].nome, alunos[*total_alunos].curso) != EOF) {
+        (*total_alunos)++;
     }
 
     fclose(arquivo);
 }
 
-void escrever_arquivo(Aluno *cabeca) {
-    FILE *arquivo = fopen("database_alunos.txt", "w");
-    if (arquivo == NULL) {
-        printf("Erro ao abrir o arquivo para escrita.\n");
-        return;
-    }
-
-    Aluno *atual = cabeca;
-    while (atual != NULL) {
-        fprintf(arquivo, "%d %s %s\n", atual->matricula, atual->nome, atual->curso);
-        atual = atual->prox;
-    }
-
-    fclose(arquivo);
-}
-
-int main() {
-    Aluno *cabeca;
-    iniciar(&cabeca);
-    ler_arquivo(&cabeca);
-
-    // Restante do seu código...
-
-    escrever_arquivo(cabeca);
-
-    return 0;
-}
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-typedef struct tipo_aluno {
-    int matricula;
-    char nome[100];
-    char curso[100];
-    struct tipo_aluno *prox;
-} Aluno;
-
-void iniciar(Aluno **cabeca) {
-    *cabeca = NULL;
-}
-
-void insere(char nome[100], char curso[100], int matricula, Aluno **cabeca) {
-    Aluno *novo = (Aluno *)malloc(sizeof(Aluno));
-    strcpy(novo->nome, nome);
-    strcpy(novo->curso, curso);
-    novo->matricula = matricula;
-    novo->prox = *cabeca;
-    *cabeca = novo;
-    printf("%d - Aluno teve sua insercao concluida!\n", matricula);
-}
-
-void imprime(Aluno **cabeca) {
-    printf("\n\n========= RELATORIO DE ALUNOS =========\n");
-    Aluno *p = *cabeca;
-    while (p != NULL) {
-        printf("%d\n", p->matricula);
-        printf("%s\n", p->nome);
-        printf("%s\n", p->curso);
-        printf("====================\n");
-        p = p->prox;
-    }
-}
-
-Aluno* buscar(int matricula, Aluno **cabeca) {
-    Aluno *p = *cabeca;
-    while (p != NULL) {
-        if (p->matricula == matricula) {
-            printf("### Aluno encontrado ###\n");
-            printf("%d\n", p->matricula);
-            printf("%s\n", p->nome);
-            printf("%s\n", p->curso);
-            return p;
+void ordenar_alunos(Aluno alunos[], int total_alunos) { /*A função ordenar_alunos() foi modificada para ordenar esse array de structs por ordem alfabética usando a função strcmp() da biblioteca string.h.*/
+    int trocou = 1;
+    while (trocou) {
+        trocou = 0;
+        for (int i = 0; i < total_alunos - 1; i++) {
+            if (strcmp(alunos[i].nome, alunos[i + 1].nome) > 0) {
+                Aluno temp = alunos[i];
+                alunos[i] = alunos[i + 1];
+                alunos[i + 1] = temp;
+                trocou = 1;
+            }
         }
-        p = p->prox;
     }
-    printf("Aluno nao encontrado na base!\n");
-    return NULL;
 }
 
-Aluno* buscar_anterior(int matricula, Aluno **cabeca) {
-    Aluno *p = *cabeca;
-    Aluno *anterior = NULL;
-
-    while (p != NULL && p->matricula != matricula) {
-        anterior = p;
-        p = p->prox;
+void imprimir_alunos(Aluno alunos[], int total_alunos) {  /* Adicionamos uma função imprimir_alunos() para imprimir os alunos ordenados.*/
+    printf("\n=========================== RELATORIO DE ALUNOS =============================\n");
+    for (int i = 0; i < total_alunos; i++) {
+        printf("Matricula: %d\n", alunos[i].matricula);
+        printf("Nome: %s\n", alunos[i].nome);
+        printf("Curso: %s\n", alunos[i].curso);
+        printf("============================================================================\n");
     }
-
-    if (p == NULL) {
-        printf("Aluno nao encontrado na base!\n");
-        return NULL;
-    }
-
-    return anterior;
-}
-
-int remover_elemento(int matricula, Aluno **cabeca) {
-    Aluno *anterior = buscar_anterior(matricula, cabeca);
-
-    if (anterior == NULL && (*cabeca)->matricula != matricula) {
-        printf("Aluno nao encontrado na base!\n");
-        return 0;
-    }
-
-    Aluno *delete;
-    if (anterior == NULL) {
-        delete = *cabeca;
-        *cabeca = (*cabeca)->prox;
-    } else {
-        delete = anterior->prox;
-        anterior->prox = delete->prox;
-    }
-
-    printf("Matricula %d removida com sucesso.\n", matricula);
-    free(delete);
-    return 1;
-}
-
-void ler_arquivo(Aluno **cabeca) {
-    FILE *arquivo = fopen("database_alunos.txt", "r");
-    if (arquivo == NULL) {
-        printf("Erro ao abrir o arquivo.\n");
-        return;
-    }
-
-    char linha[255];
-    while (fgets(linha, sizeof(linha), arquivo)) {
-        int matricula;
-        char nome[100];
-        char curso[100];
-
-        sscanf(linha, "%d %s %[^\n]", &matricula, nome, curso);
-        insere(nome, curso, matricula, cabeca);
-    }
-
-    fclose(arquivo);
-}
-
-void escrever_arquivo(Aluno *cabeca) {
-    FILE *arquivo = fopen("database_alunos.txt", "w");
-    if (arquivo == NULL) {
-        printf("Erro ao abrir o arquivo para escrita.\n");
-        return;
-    }
-
-    Aluno *atual = cabeca;
-    while (atual != NULL) {
-        fprintf(arquivo, "%d %s %s\n", atual->matricula, atual->nome, atual->curso);
-        atual = atual->prox;
-    }
-
-    fclose(arquivo);
 }
 
 int main() {
-    Aluno *cabeca;
-    iniciar(&cabeca);
-    ler_arquivo(&cabeca);
+    Aluno alunos[100]; // Definindo um array de alunos com capacidade para 100 alunos
+    int total_alunos = 0;
 
-    // Restante do seu código...
+    ler_arquivo(alunos, &total_alunos);
 
-    escrever_arquivo(cabeca);
+    ordenar_alunos(alunos, total_alunos);
+
+    imprimir_alunos(alunos, total_alunos);
 
     return 0;
 }
+
+
+/******************************************************************************
+
+O código lê o arquivo, preenche o array de alunos, ordena-o por ordem alfabética e imprime os alunos ordenados.
+usar o cabeçalho string.h e sua função de comparação (strcmp()).
+
+
+
+
+
+
+
+
+*******************************************************************************/
