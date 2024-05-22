@@ -119,7 +119,7 @@ int main() {
                 break;
             case 'S':
             case 's':
-                printf("Saindo...\n");
+                printf("Saindo Graças a Deus...\n");
                 return 0;
             default:
                 printf("Opção inválida. Tente novamente.\n");
